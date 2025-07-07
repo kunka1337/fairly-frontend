@@ -17,7 +17,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { useWallet } from "@solana/wallet-adapter-react";
 import WalletSelectModal from "@/components/WalletSelectModal";
 import { toast } from "sonner";
-import { Keypair, Connection, PublicKey } from "@solana/web3.js";
+import { Keypair, Connection, PublicKey, SendOptions, Transaction, TransactionSignature } from "@solana/web3.js";
 import {
   Dialog,
   DialogContent,
@@ -58,8 +58,17 @@ type BaseFormData = z.infer<typeof baseSchema>;
 type RequiredFormData = z.infer<typeof requiredSchema>;
 type FormData = BaseFormData | RequiredFormData;
 
+interface Wallet {
+  signAndSendTransaction(
+    transaction: Transaction,
+    options?: SendOptions
+  ): Promise<{ signature: TransactionSignature }>;
+}
+
+
+
 const CreateTokenPageContent = () => {
-  const { publicKey, connected, sendTransaction } = useWallet();
+  const { publicKey, connected, wallet } = useWallet();
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [poolCreated, setPoolCreated] = useState(false);
@@ -163,7 +172,7 @@ const CreateTokenPageContent = () => {
       setIsLoading(true);
       // Get the file from the file input
       const file = fileInputRef.current?.files?.[0];
-      if (!file || !sendTransaction || !publicKey) {
+      if (!file || !wallet || !publicKey) {
         toast.error(file ? 'Wallet not connected' : 'Token logo is required');
         return;
       }
@@ -218,11 +227,10 @@ const CreateTokenPageContent = () => {
       });
 
       const {
-        context: { slot: minContextSlot },
         value: { blockhash, lastValidBlockHeight }
       } = await connection.getLatestBlockhashAndContext();
 
-      const signature = await sendTransaction(poolTx, connection, { minContextSlot });
+      const { signature } = await (wallet as any as Wallet).signAndSendTransaction(poolTx);
       await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
       toast.success('Token created successfully');
@@ -461,7 +469,7 @@ const CreateTokenPageContent = () => {
               {(() => {
                 const solAmount = parseFloat(preBuyAmount) || 0;
                 const amount = 0.9 * (solAmount * 1097600432) / (solAmount + 32.928);
-                const formattedAmount = amount.toLocaleString();
+                const formattedAmount = Math.round(amount).toLocaleString();
                 const percent = ((amount / 1_000_000_000) * 100).toFixed(2);
 
                 return (

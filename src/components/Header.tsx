@@ -26,13 +26,12 @@ import WalletSelectModal from "@/components/WalletSelectModal";
 import { useTheme } from "next-themes";
 
 // Common components
-const Logo = ({ theme, mounted }: { theme: string | undefined; mounted: boolean }) => {
-  const logoSrc = mounted ? (theme === "dark" ? "/logo_dark.png" : "/logo_light.png") : "/logo_dark.png";
+const Logo = ({ }: { theme: string | undefined; mounted: boolean }) => {
   return (
     <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
       <div className="w-10 h-10 rounded-xl flex items-center justify-center">
         <Image
-          src={logoSrc}
+          src="/logo.svg"
           alt="Fairly Logo"
           width={40}
           height={40}
@@ -40,7 +39,7 @@ const Logo = ({ theme, mounted }: { theme: string | undefined; mounted: boolean 
           priority
         />
       </div>
-      <h1 className="text-2xl font-bold text-foreground hidden sm:block">Fairly</h1>
+      <h1 className="text-2xl font-bold text-foreground hidden sm:block">FAIRLY</h1>
     </Link>
   );
 };
