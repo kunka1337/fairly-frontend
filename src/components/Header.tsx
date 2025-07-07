@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Rocket, HelpCircle, ChevronDown, Coins, Sun, Moon, LogOut, User, Users } from "lucide-react";
+import { Rocket, HelpCircle, ChevronDown, Coins, Sun, Moon, LogOut, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -24,7 +24,6 @@ import { useEffect, useState } from "react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import WalletSelectModal from "@/components/WalletSelectModal";
 import { useTheme } from "next-themes";
-import { useFarcaster } from "@/contexts/FarcasterContext";
 
 // Common components
 const Logo = ({ theme, mounted }: { theme: string | undefined; mounted: boolean }) => {
@@ -143,33 +142,6 @@ const HelpSheet = () => (
   </Sheet>
 );
 
-const FarcasterButton = ({ isInFarcaster, isReady, user, login }: {
-  isInFarcaster: boolean;
-  isReady: boolean;
-  user: any;
-  login: () => void;
-}) => {
-  if (!isInFarcaster || !isReady) return null;
-
-  if (user) {
-    return (
-      <Button variant="outline" className="flex items-center gap-2">
-        <Users className="w-4 h-4" />
-        <span className="sm:hidden">FID {user.fid}</span>
-        <span className="hidden sm:inline">Farcaster FID {user.fid}</span>
-      </Button>
-    );
-  }
-
-  return (
-    <Button onClick={login} variant="outline" className="flex items-center gap-2">
-      <Users className="w-4 h-4" />
-      <span className="sm:hidden">Login FC</span>
-      <span className="hidden sm:inline">Login with Farcaster</span>
-    </Button>
-  );
-};
-
 const Header = () => {
   const { publicKey, disconnect, connecting } = useWallet();
   const { connection } = useConnection();
@@ -177,7 +149,6 @@ const Header = () => {
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { isInFarcaster, isReady, user, login, logout } = useFarcaster();
 
   useEffect(() => {
     setMounted(true);
@@ -261,12 +232,6 @@ const Header = () => {
             )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {isInFarcaster && user && (
-            <DropdownMenuItem onClick={logout} className="text-orange-500 focus:text-orange-500">
-              <Users className="mr-2 h-4 w-4" />
-              <span>Logout Farcaster</span>
-            </DropdownMenuItem>
-          )}
           <DropdownMenuItem onClick={handleDisconnect} className="text-red-500 focus:text-red-500">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Disconnect wallet</span>
@@ -287,12 +252,6 @@ const Header = () => {
           <div className="flex items-center gap-3">
             <HelpSheet />
             <CreateTokenButton />
-            <FarcasterButton
-              isInFarcaster={isInFarcaster}
-              isReady={isReady}
-              user={user}
-              login={login}
-            />
             {renderWalletContent()}
           </div>
         </div>
