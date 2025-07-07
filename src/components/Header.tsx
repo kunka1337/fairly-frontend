@@ -90,33 +90,46 @@ const HelpSheet = () => (
         <HelpCircle className="w-4 h-4" />
       </Button>
     </SheetTrigger>
-    <SheetContent className="[&>button]:hidden">
-      <SheetHeader className="text-left space-y-4">
-        <SheetTitle className="text-left">How do I launch with Fairly?</SheetTitle>
-        <SheetDescription className="text-left">
-          Connect your Solana wallet on Fairly, press "Create token", enter your token's name, ticker, image, and social links, then hit Launch.
-        </SheetDescription>
+    <SheetContent className="[&>button]:hidden overflow-y-auto">
+      <div className="space-y-6 pb-6">
+        <SheetHeader className="text-left space-y-6">
+          <div>
+            <SheetTitle className="text-left">How do I launch with Fairly?</SheetTitle>
+            <SheetDescription className="text-left mt-2">
+              Connect your Solana wallet on Fairly, press "Create token", enter your token's name, ticker, image, and social links, then hit Launch.
+            </SheetDescription>
+          </div>
 
-        <SheetTitle className="text-left">How do I claim my fees?</SheetTitle>
-        <SheetDescription className="text-left">
-          Head to the My Tokens tab, select the token you want to collect fees from (both bonding curve or AMM), and click "Claim" to receive your accrued SOL.
-        </SheetDescription>
+          <div>
+            <SheetTitle className="text-left">How do I claim my fees?</SheetTitle>
+            <SheetDescription className="text-left mt-2">
+              Head to the My Tokens tab, select the token you want to collect fees from (both bonding curve or AMM), and click "Claim" to receive your accrued SOL.
+            </SheetDescription>
+          </div>
 
-        <SheetTitle className="text-left">Where can I buy Fairly memecoins?</SheetTitle>
-        <SheetDescription className="text-left">
-          You can buy Fairly tokens instantly on Axiom, BullX, Photon, Jupiter, and all other major Solana trading platforms.
-        </SheetDescription>
+          <div>
+            <SheetTitle className="text-left">Where can I buy Fairly memecoins?</SheetTitle>
+            <SheetDescription className="text-left mt-2">
+              You can buy Fairly tokens instantly on Axiom, BullX, Photon, Jupiter, and all other major Solana trading platforms.
+            </SheetDescription>
+          </div>
 
-        <SheetTitle className="text-left">Where can I find my launched memecoins?</SheetTitle>
-        <SheetDescription className="text-left">
-          Once you connect your wallet, your tokens will show up in the My Tokens section of your Fairly profile.
-        </SheetDescription>
+          <div>
+            <SheetTitle className="text-left">Where can I find my launched memecoins?</SheetTitle>
+            <SheetDescription className="text-left mt-2">
+              Once you connect your wallet, your tokens will show up in the My Tokens section of your Fairly profile.
+            </SheetDescription>
+          </div>
 
-        <SheetTitle className="text-left">What percentage of fees goes back to creators vs. the platform?</SheetTitle>
-        <SheetDescription className="text-left">
-          Creators receive 95% of fees from both the bonding curve and AMM. The remaining 5% supports the Fairly platform. Fees start at 10% and ramp down to 2% over the first 300 seconds to protect launches from snipers—and all fees are paid solely in SOL.        </SheetDescription>
-      </SheetHeader>
-      <SocialLinks />
+          <div>
+            <SheetTitle className="text-left">What percentage of fees goes back to creators vs. the platform?</SheetTitle>
+            <SheetDescription className="text-left mt-2">
+              Creators receive 95% of fees from both the bonding curve and AMM. The remaining 5% supports the Fairly platform. Fees start at 10% and ramp down to 2% over the first 300 seconds to protect launches from snipers—and all fees are paid solely in SOL.
+            </SheetDescription>
+          </div>
+        </SheetHeader>
+        <SocialLinks />
+      </div>
     </SheetContent>
   </Sheet>
 );
