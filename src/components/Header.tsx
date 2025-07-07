@@ -10,7 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { XLogo, TelegramLogo } from './logos';
+import { XLogo, TelegramLogo, FarcasterLogo } from './logos';
 import Link from "next/link";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
@@ -61,6 +61,15 @@ const SocialLinks = () => (
   <div className="mt-8 space-y-4">
     <h3 className="text-sm font-medium text-left">Connect with us</h3>
     <div className="space-y-3">
+      <a
+        href="https://farcaster.xyz/fairlydotbest"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <FarcasterLogo className="w-4 h-4 text-[#8A63D2]" />
+        <span className="text-sm">Follow us on Farcaster</span>
+      </a>
       <a
         href="https://x.com/fairlydotbest"
         target="_blank"
