@@ -143,7 +143,8 @@ const HelpSheet = () => (
 );
 
 const Header = () => {
-  const { publicKey, disconnect, connecting } = useWallet();
+  const { publicKey, disconnect, connecting, wallet } = useWallet();
+  console.log("111------", publicKey, disconnect, connecting, wallet)
   const { connection } = useConnection();
   const [balance, setBalance] = useState<number | null>(null);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
