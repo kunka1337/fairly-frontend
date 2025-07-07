@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import Image from "next/image";
-import { useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -65,7 +65,7 @@ const CreateTokenPageContent = () => {
   const [showPreBuyCard, setShowPreBuyCard] = useState(false);
   const [preBuyAmount, setPreBuyAmount] = useState<string>("");
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(null);
-  
+
   const {
     previewUrl,
     fileInputRef,
@@ -98,7 +98,7 @@ const CreateTokenPageContent = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!connected) {
       setWalletModalOpen(true);
       return;
@@ -207,7 +207,7 @@ const CreateTokenPageContent = () => {
       // Step 2: Sign with keypair
       transaction.sign(keyPair);
 
-            // Step 3: Sign and send transaction (try signAndSendTransaction first, fallback to signTransaction)
+      // Step 3: Sign and send transaction (try signAndSendTransaction first, fallback to signTransaction)
       const connection = new Connection(
         process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com'
       );
@@ -226,7 +226,7 @@ const CreateTokenPageContent = () => {
       };
 
       const phantomProvider = getPhantomProvider();
-      
+
       if (phantomProvider?.signAndSendTransaction && wallet?.adapter.name === 'Phantom') {
         // Use Phantom's signAndSendTransaction for better UX
         const result = await phantomProvider.signAndSendTransaction(transaction);
@@ -236,7 +236,7 @@ const CreateTokenPageContent = () => {
         const signedTransaction = await signTransaction(transaction);
         signature = await connection.sendRawTransaction(signedTransaction.serialize());
       }
-      
+
       // Step 4: Verify transaction confirmation
       await connection.getSignatureStatus(signature);
 
@@ -250,8 +250,8 @@ const CreateTokenPageContent = () => {
       ) {
         toast('Transaction was cancelled.');
       } else {
-      console.error("Error creating token:", error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create token');
+        console.error("Error creating token:", error);
+        toast.error(error instanceof Error ? error.message : 'Failed to create token');
       }
     } finally {
       setIsLoading(false);
@@ -451,7 +451,7 @@ const CreateTokenPageContent = () => {
           </Form>
         </div>
       </div>
-      
+
       <Dialog open={showPreBuyCard} onOpenChange={setShowPreBuyCard}>
         <DialogContent className="max-w-lg p-8">
           <DialogHeader className="text-left mb-4">
@@ -475,9 +475,10 @@ const CreateTokenPageContent = () => {
               />
               {(() => {
                 const solAmount = parseFloat(preBuyAmount) || 0;
-                const amount = Math.round(1_000_000 * solAmount);
+                const amount = 0.9 * (solAmount * 1097600432) / (solAmount + 32.928);
                 const formattedAmount = amount.toLocaleString();
                 const percent = ((amount / 1_000_000_000) * 100).toFixed(2);
+
                 return (
                   <p className="text-xs text-muted-foreground">
                     You buy {formattedAmount} {pendingFormData?.ticker || "TOKEN"} ({percent}% of total supply)
