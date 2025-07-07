@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { DynamicBondingCurveClient } from '@meteora-ag/dynamic-bonding-curve-sdk';
 
 const PINATA_API_KEY = process.env.PINATA_API_KEY;
 const PINATA_API_SECRET = process.env.PINATA_API_SECRET;
 const PINATA_JWT = process.env.PINATA_JWT;
-const NEXT_PUBLIC_RPC_URL  = process.env.NEXT_PUBLIC_RPC_URL;
+const NEXT_PUBLIC_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;
 const POOL_CONFIG_KEY = process.env.NEXT_PUBLIC_POOL_CONFIG_KEY;
 
 if (!NEXT_PUBLIC_RPC_URL || !POOL_CONFIG_KEY) {
@@ -19,9 +17,9 @@ async function uploadToPinata(file: Buffer, fileName: string, mimeType: string) 
   const headers: Record<string, string> = PINATA_JWT
     ? { Authorization: `Bearer ${PINATA_JWT}` }
     : {
-        pinata_api_key: PINATA_API_KEY!,
-        pinata_secret_api_key: PINATA_API_SECRET!,
-      };
+      pinata_api_key: PINATA_API_KEY!,
+      pinata_secret_api_key: PINATA_API_SECRET!,
+    };
 
   const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
     method: 'POST',
@@ -40,9 +38,9 @@ async function uploadJSONToPinata(json: object) {
     ...(PINATA_JWT
       ? { Authorization: `Bearer ${PINATA_JWT}` }
       : {
-          pinata_api_key: PINATA_API_KEY!,
-          pinata_secret_api_key: PINATA_API_SECRET!,
-        }),
+        pinata_api_key: PINATA_API_KEY!,
+        pinata_secret_api_key: PINATA_API_SECRET!,
+      }),
   };
 
   const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
@@ -62,11 +60,9 @@ type UploadRequest = {
   tokenSymbol: string;
   description?: string;
   mint: string;
-  userWallet: string;
   website?: string;
   twitter?: string;
   telegram?: string;
-  preBuyAmount?: string | number;
 };
 
 export async function POST(request: Request) {
@@ -78,13 +74,12 @@ export async function POST(request: Request) {
       tokenSymbol,
       description,
       mint,
-      userWallet,
       website,
       twitter,
       telegram
     } = body;
 
-    if (!tokenLogo || !tokenName || !tokenSymbol || !mint || !userWallet) {
+    if (!tokenLogo || !tokenName || !tokenSymbol || !mint) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -110,38 +105,10 @@ export async function POST(request: Request) {
     // Upload metadata to Pinata
     const metadataUrl = await uploadJSONToPinata(metadata);
 
-    // Create pool transaction on Meteora
-    const connection = new Connection(NEXT_PUBLIC_RPC_URL as string, 'confirmed');
-    const client = new DynamicBondingCurveClient(connection, 'confirmed');
-    let poolTx;
-    const poolParams = {
-      config: new PublicKey(POOL_CONFIG_KEY as string),
-      baseMint: new PublicKey(mint),
-      name: tokenName,
-      symbol: tokenSymbol,
-      uri: metadataUrl,
-      payer: new PublicKey(userWallet),
-      poolCreator: new PublicKey(userWallet),
-    };
-    // For now, just create the pool without first buy
-    // TODO: Update this once the new Meteora SDK API is properly documented
-    poolTx = await client.pool.createPool(poolParams);
-    const { blockhash } = await connection.getLatestBlockhash();
-    poolTx.feePayer = new PublicKey(userWallet);
-    poolTx.recentBlockhash = blockhash;
-
-    // Log the IPFS links    
-    console.log('Image IPFS URL:', imageUrl);
-    console.log('Metadata IPFS URL:', metadataUrl);
-
     return NextResponse.json({
       success: true,
       imageUrl: imageUrl,
       metadataUrl: metadataUrl,
-      poolTx: poolTx.serialize({
-        requireAllSignatures: false,
-        verifySignatures: false
-      }).toString('base64'),
     });
   } catch (error) {
     console.error('Upload error:', error);

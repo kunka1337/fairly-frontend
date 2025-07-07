@@ -17,7 +17,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { useWallet } from "@solana/wallet-adapter-react";
 import WalletSelectModal from "@/components/WalletSelectModal";
 import { toast } from "sonner";
-import { Keypair, Transaction, Connection } from "@solana/web3.js";
+import { Keypair, Connection, PublicKey } from "@solana/web3.js";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { InputWithAdornment } from "@/components/ui/InputWithAdornment";
+import { DynamicBondingCurveClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
 
 const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/i;
 const telegramRegex = /^https?:\/\/(t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,}$/;
@@ -58,7 +59,7 @@ type RequiredFormData = z.infer<typeof requiredSchema>;
 type FormData = BaseFormData | RequiredFormData;
 
 const CreateTokenPageContent = () => {
-  const { publicKey, connected, wallet, signTransaction } = useWallet();
+  const { publicKey, connected, sendTransaction } = useWallet();
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [poolCreated, setPoolCreated] = useState(false);
@@ -162,7 +163,7 @@ const CreateTokenPageContent = () => {
       setIsLoading(true);
       // Get the file from the file input
       const file = fileInputRef.current?.files?.[0];
-      if (!file || !signTransaction || !publicKey) {
+      if (!file || !sendTransaction || !publicKey) {
         toast.error(file ? 'Wallet not connected' : 'Token logo is required');
         return;
       }
@@ -199,46 +200,30 @@ const CreateTokenPageContent = () => {
       }
 
       const uploadJson = await uploadResponse.json();
-      if (!uploadJson.poolTx) {
-        throw new Error(uploadJson.error || 'No transaction returned from backend');
-      }
-      const transaction = Transaction.from(Buffer.from(uploadJson.poolTx, 'base64'));
+      const metadataUrl = uploadJson.metadataUrl;
 
-      // Step 2: Sign with keypair
-      transaction.sign(keyPair);
-
-      // Step 3: Sign and send transaction (try signAndSendTransaction first, fallback to signTransaction)
       const connection = new Connection(
         process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com'
       );
 
-      let signature: string;
+      const client = new DynamicBondingCurveClient(connection, 'confirmed');
+      const poolTx = await client.pool.createPool({
+        config: new PublicKey(process.env.NEXT_PUBLIC_POOL_CONFIG_KEY as string),
+        baseMint: keyPair.publicKey,
+        name: data.name || "",
+        symbol: data.ticker || "",
+        uri: metadataUrl,
+        payer: publicKey,
+        poolCreator: publicKey,
+      });
 
-      // Try to use signAndSendTransaction for Phantom wallet
-      const getPhantomProvider = () => {
-        if ('phantom' in window) {
-          const provider = (window as any).phantom?.solana;
-          if (provider?.isPhantom) {
-            return provider;
-          }
-        }
-        return null;
-      };
+      const {
+        context: { slot: minContextSlot },
+        value: { blockhash, lastValidBlockHeight }
+      } = await connection.getLatestBlockhashAndContext();
 
-      const phantomProvider = getPhantomProvider();
-
-      if (phantomProvider?.signAndSendTransaction && wallet?.adapter.name === 'Phantom') {
-        // Use Phantom's signAndSendTransaction for better UX
-        const result = await phantomProvider.signAndSendTransaction(transaction);
-        signature = result.signature;
-      } else {
-        // Fallback to traditional approach for other wallets (Solflare, etc.)
-        const signedTransaction = await signTransaction(transaction);
-        signature = await connection.sendRawTransaction(signedTransaction.serialize());
-      }
-
-      // Step 4: Verify transaction confirmation
-      await connection.getSignatureStatus(signature);
+      const signature = await sendTransaction(poolTx, connection, { minContextSlot });
+      await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
       toast.success('Token created successfully');
       setPoolCreated(true);
