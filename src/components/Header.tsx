@@ -142,8 +142,7 @@ const HelpSheet = () => (
 );
 
 const Header = () => {
-  const { publicKey, disconnect, connecting, wallet } = useWallet();
-  console.log("111------", publicKey, disconnect, connecting, wallet)
+  const { publicKey, disconnect, connecting, connected } = useWallet();
   const { connection } = useConnection();
   const [balance, setBalance] = useState<number | null>(null);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
@@ -153,6 +152,15 @@ const Header = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+
+
+  // Close wallet modal when connected
+  useEffect(() => {
+    if (connected && walletModalOpen) {
+      setWalletModalOpen(false);
+    }
+  }, [connected, walletModalOpen]);
 
   useEffect(() => {
     if (!publicKey || !connection) return;

@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { useWallet } from "@solana/wallet-adapter-react";
-import WalletSelectModal from "@/components/WalletSelectModal";
 import { toast } from "sonner";
 import { Keypair, Connection, PublicKey, SendOptions, Transaction, TransactionSignature } from "@solana/web3.js";
 import {
@@ -69,7 +68,6 @@ interface Wallet {
 
 const CreateTokenPageContent = () => {
   const { publicKey, connected, wallet } = useWallet();
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [poolCreated, setPoolCreated] = useState(false);
   const [showPreBuyCard, setShowPreBuyCard] = useState(false);
@@ -110,7 +108,7 @@ const CreateTokenPageContent = () => {
     e.preventDefault();
 
     if (!connected) {
-      setWalletModalOpen(true);
+      toast.error("Please connect your wallet first using the button in the header");
       return;
     }
 
@@ -267,7 +265,6 @@ const CreateTokenPageContent = () => {
 
   return (
     <>
-      <WalletSelectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
       <div className="min-h-full flex justify-center px-4 py-8">
         <div className="w-full max-w-lg bg-card rounded-xl shadow-lg p-8 border border-border my-auto">
           <h2 className="text-2xl font-bold mb-2 text-left">Create Token</h2>

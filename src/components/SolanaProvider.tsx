@@ -36,9 +36,19 @@ export const SolanaProvider: FC<SolanaProviderProps> = ({ children }) => {
     ],
     []
   );
+
+  // Handle wallet connection errors
+  const onError = (error: Error) => {
+    console.error('Wallet connection error:', error);
+  };
+
   return (
     <FarcasterSolanaProvider endpoint={process.env.NEXT_PUBLIC_RPC_URL!}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider 
+        wallets={wallets} 
+        autoConnect
+        onError={onError}
+      >
         <WalletModalProvider>
           {children}
         </WalletModalProvider>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,14 +8,14 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletName } from "@solana/wallet-adapter-base";
 
 export default function WalletSelectModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const { wallets, select, connect, connecting, wallet } = useWallet();
+  const { wallets, select, connect, connecting, wallet, connected } = useWallet();
   const [selected, setSelected] = useState<string | null>(null);
-  const [shouldConnect, setShouldConnect] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   // Find the first detected (installed) wallet
   const detectedWallet = wallets.find(w => w.readyState === "Installed");
 
-  // Preselect detected wallet or first wallet when modal opens
+  // Reset state when modal opens/closes
   useEffect(() => {
     if (open) {
       if (detectedWallet) {
@@ -25,30 +25,57 @@ export default function WalletSelectModal({ open, onOpenChange }: { open: boolea
       } else {
         setSelected(null);
       }
+      setIsConnecting(false);
+    } else {
+      // Reset state when modal closes
+      setSelected(null);
+      setIsConnecting(false);
     }
   }, [open, detectedWallet, wallets]);
 
-  // Effect to connect after wallet selection
+  // Close modal when successfully connected
   useEffect(() => {
-    if (shouldConnect && wallet && wallet.adapter.name === selected) {
-      connect().then(() => {
-        onOpenChange(false);
-        setShouldConnect(false);
-      });
+    if (connected && open) {
+      onOpenChange(false);
     }
-  }, [shouldConnect, wallet, selected, connect, onOpenChange]);
+  }, [connected, open, onOpenChange]);
 
-  const handleConnect = () => {
-    if (selected) {
+  const handleConnect = useCallback(async () => {
+    if (!selected) return;
+
+    try {
+      setIsConnecting(true);
+      
       if (wallet && wallet.adapter.name === selected) {
-        connect().then(() => {
-          onOpenChange(false);
-        });
+        // Wallet is already selected, just connect
+        await connect();
       } else {
+        // Select wallet first, then connect
         select(selected as WalletName);
-        setShouldConnect(true);
+        // The wallet selection will trigger a re-render, and we'll connect in the next effect
       }
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+      setIsConnecting(false);
     }
+  }, [selected, wallet, connect, select]);
+
+  // Connect after wallet selection
+  useEffect(() => {
+    if (wallet && wallet.adapter.name === selected && isConnecting) {
+      connect()
+        .then(() => {
+          setIsConnecting(false);
+        })
+        .catch((error) => {
+          console.error('Failed to connect wallet:', error);
+          setIsConnecting(false);
+        });
+    }
+  }, [wallet, selected, connect, isConnecting]);
+
+  const handleWalletSelect = (walletName: string) => {
+    setSelected(walletName);
   };
 
   return (
@@ -60,7 +87,7 @@ export default function WalletSelectModal({ open, onOpenChange }: { open: boolea
         </DialogHeader>
         <RadioGroup
           value={selected ?? detectedWallet?.adapter.name ?? undefined}
-          onValueChange={setSelected}
+          onValueChange={handleWalletSelect}
           className="flex flex-col gap-2"
         >
           {wallets.map(wallet => (
@@ -96,8 +123,11 @@ export default function WalletSelectModal({ open, onOpenChange }: { open: boolea
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleConnect} disabled={!selected && !detectedWallet}>
-            {connecting ? "Connecting..." : "Connect"}
+          <Button 
+            onClick={handleConnect} 
+            disabled={!selected || connecting || isConnecting}
+          >
+            {connecting || isConnecting ? "Connecting..." : "Connect"}
           </Button>
         </DialogFooter>
       </DialogContent>
