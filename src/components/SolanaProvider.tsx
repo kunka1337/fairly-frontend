@@ -1,26 +1,22 @@
 "use client";
 import React, { FC, ReactNode, useMemo } from "react";
-import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
+import { WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   TrustWalletAdapter,
   CoinbaseWalletAdapter,
-  HuobiWalletAdapter,
-  SkyWalletAdapter,
-  SaifuWalletAdapter,
-  FractalWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
 import { WalletConnectWalletAdapter } from "@solana/wallet-adapter-walletconnect";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { FarcasterSolanaProvider } from '@farcaster/mini-app-solana';
 
 interface SolanaProviderProps {
   children: ReactNode;
 }
 
 export const SolanaProvider: FC<SolanaProviderProps> = ({ children }) => {
-  const endpoint = useMemo(() => process.env.NEXT_PUBLIC_RPC_URL!, []);
   const wallets = useMemo(
     () => [
       // Most popular wallets first
@@ -37,21 +33,17 @@ export const SolanaProvider: FC<SolanaProviderProps> = ({ children }) => {
           projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "your-project-id",
         },
       }),
-
-      // Specialized wallets
-      new HuobiWalletAdapter(),
-      new SkyWalletAdapter(),
-      new SaifuWalletAdapter(),
-      new FractalWalletAdapter(),
     ],
     []
   );
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <FarcasterSolanaProvider endpoint={process.env.NEXT_PUBLIC_RPC_URL!}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          {children}
+        </WalletModalProvider>
       </WalletProvider>
-    </ConnectionProvider>
+    </FarcasterSolanaProvider>
   );
 };
 
