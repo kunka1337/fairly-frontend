@@ -16,7 +16,7 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { toast } from "sonner";
-import { Keypair, Connection, PublicKey, SendOptions, Transaction, TransactionSignature } from "@solana/web3.js";
+import { Keypair, Connection, PublicKey } from "@solana/web3.js";
 import {
   Dialog,
   DialogContent,
@@ -57,17 +57,9 @@ type BaseFormData = z.infer<typeof baseSchema>;
 type RequiredFormData = z.infer<typeof requiredSchema>;
 type FormData = BaseFormData | RequiredFormData;
 
-interface Wallet {
-  signAndSendTransaction(
-    transaction: Transaction,
-    options?: SendOptions
-  ): Promise<{ signature: TransactionSignature }>;
-}
-
-
 
 const CreateTokenPageContent = () => {
-  const { publicKey, connected, wallet } = useWallet();
+  const { publicKey, connected, sendTransaction } = useWallet();
   const [isLoading, setIsLoading] = useState(false);
   const [poolCreated, setPoolCreated] = useState(false);
   const [showPreBuyCard, setShowPreBuyCard] = useState(false);
@@ -170,7 +162,7 @@ const CreateTokenPageContent = () => {
       setIsLoading(true);
       // Get the file from the file input
       const file = fileInputRef.current?.files?.[0];
-      if (!file || !wallet || !publicKey) {
+      if (!file || !sendTransaction || !publicKey) {
         toast.error(file ? 'Wallet not connected' : 'Token logo is required');
         return;
       }
@@ -228,7 +220,7 @@ const CreateTokenPageContent = () => {
         value: { blockhash, lastValidBlockHeight }
       } = await connection.getLatestBlockhashAndContext();
 
-      const { signature } = await (wallet as any as Wallet).signAndSendTransaction(poolTx);
+      const signature = await sendTransaction(poolTx, connection);
       await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
       toast.success('Token created successfully');
