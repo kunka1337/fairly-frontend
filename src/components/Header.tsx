@@ -190,23 +190,6 @@ const Header = () => {
     await disconnect();
   };
 
-  const renderWalletContent = () => {
-    if (!publicKey) {
-      return (
-        <Button onClick={() => setWalletModalOpen(true)} disabled={connecting}>
-          {connecting ? "Connecting..." : (
-            <>
-              <span className="sm:hidden">Connect</span>
-              <span className="hidden sm:inline">Connect wallet</span>
-            </>
-          )}
-        </Button>
-      );
-    }
-
-    return
-  };
-
   return (
     <>
       <WalletSelectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
