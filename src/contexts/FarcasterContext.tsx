@@ -36,19 +36,19 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
 
     try {
       const { token } = await sdk.quickAuth.getToken();
-      
+
       if (!token) {
         throw new Error('No token received from Farcaster');
       }
-      
+
       // Decode the JWT payload to get user info
       const tokenParts = token.split('.');
       if (tokenParts.length !== 3 || !tokenParts[1]) {
         throw new Error('Invalid JWT token format');
       }
-      
+
       const payload = JSON.parse(atob(tokenParts[1]));
-      
+
       setUser({
         fid: payload.sub,
         token
@@ -66,20 +66,14 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
     const initializeFarcaster = async () => {
       try {
         // Check if we're running in a Farcaster Mini App environment
-        const isFarcasterEnv = typeof window !== 'undefined' && 
-          (window.location.href.includes('warpcast.com') || 
-           window.location.href.includes('farcaster.xyz') ||
-           // Check for Farcaster user agent or other indicators
-           navigator.userAgent.includes('Warpcast') ||
-           // Check if parent window exists (indicating iframe)
-           window.parent !== window);
+        const isFarcasterEnv = await sdk.isInMiniApp();
 
         setIsInFarcaster(isFarcasterEnv);
 
         if (isFarcasterEnv) {
           // Initialize the SDK and mark the app as ready
           await sdk.actions.ready();
-          
+
           // Try to get existing token if available
           const existingToken = sdk.quickAuth.token;
           if (existingToken) {
