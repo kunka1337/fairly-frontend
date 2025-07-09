@@ -1,7 +1,5 @@
 "use client";
 import React, { FC, ReactNode, useMemo } from "react";
-import { WalletProvider } from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
@@ -17,42 +15,9 @@ interface SolanaProviderProps {
 }
 
 export const SolanaProvider: FC<SolanaProviderProps> = ({ children }) => {
-  const wallets = useMemo(
-    () => [
-      // Most popular wallets first
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
-      new TrustWalletAdapter(),
-      new CoinbaseWalletAdapter(),
-
-      // Mobile wallet support
-      new WalletConnectWalletAdapter({
-        network: WalletAdapterNetwork.Mainnet,
-        options: {
-          relayUrl: "wss://relay.walletconnect.com",
-          projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "your-project-id",
-        },
-      }),
-    ],
-    []
-  );
-
-  // Handle wallet connection errors
-  const onError = (error: Error) => {
-    console.error('Wallet connection error:', error);
-  };
-
   return (
     <FarcasterSolanaProvider endpoint={process.env.NEXT_PUBLIC_RPC_URL!}>
-      <WalletProvider 
-        wallets={wallets} 
-        autoConnect
-        onError={onError}
-      >
-        <WalletModalProvider>
-          {children}
-        </WalletModalProvider>
-      </WalletProvider>
+      {children}
     </FarcasterSolanaProvider>
   );
 };

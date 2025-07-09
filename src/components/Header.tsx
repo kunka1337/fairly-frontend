@@ -204,54 +204,12 @@ const Header = () => {
       );
     }
 
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button>
-            <span className="flex items-center gap-x-2">
-              <div className="w-6 h-6 bg-muted/30 border border-white rounded-full flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="sm:hidden">{shortKey} · {solBalance}</span>
-              <span className="hidden sm:inline">{shortKey} · {solBalance}</span>
-              <ChevronDown className="w-4 h-4" />
-            </span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link href="/my-tokens" className="flex items-center">
-              <Coins className="mr-2 h-4 w-4" />
-              <span>My Tokens</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-            {theme === "dark" ? (
-              <>
-                <Sun className="mr-2 h-4 w-4" />
-                <span>Light Mode</span>
-              </>
-            ) : (
-              <>
-                <Moon className="mr-2 h-4 w-4" />
-                <span>Dark Mode</span>
-              </>
-            )}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleDisconnect} className="text-red-500 focus:text-red-500">
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Disconnect wallet</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
+    return
   };
 
   return (
     <>
-      {!publicKey && <WalletSelectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />}
+      <WalletSelectModal open={walletModalOpen} onOpenChange={setWalletModalOpen} />
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -260,7 +218,58 @@ const Header = () => {
           <div className="flex items-center gap-3">
             <HelpSheet />
             <CreateTokenButton />
-            {renderWalletContent()}
+            {publicKey !== null ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button>
+                    <span className="flex items-center gap-x-2">
+                      <div className="w-6 h-6 bg-muted/30 border border-white rounded-full flex items-center justify-center">
+                        <User className="w-3.5 h-3.5 text-white" />
+                      </div>
+                      <span className="sm:hidden">{shortKey} · {solBalance}</span>
+                      <span className="hidden sm:inline">{shortKey} · {solBalance}</span>
+                      <ChevronDown className="w-4 h-4" />
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/my-tokens" className="flex items-center">
+                      <Coins className="mr-2 h-4 w-4" />
+                      <span>My Tokens</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                    {theme === "dark" ? (
+                      <>
+                        <Sun className="mr-2 h-4 w-4" />
+                        <span>Light Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="mr-2 h-4 w-4" />
+                        <span>Dark Mode</span>
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleDisconnect} className="text-red-500 focus:text-red-500">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Disconnect wallet</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={() => setWalletModalOpen(true)} disabled={connecting}>
+                {connecting ? "Connecting..." : (
+                  <>
+                    <span className="sm:hidden">Connect</span>
+                    <span className="hidden sm:inline">Connect wallet</span>
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </div>
