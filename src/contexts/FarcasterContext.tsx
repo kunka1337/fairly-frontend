@@ -73,6 +73,7 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
         if (isFarcasterEnv) {
           // Initialize the SDK and mark the app as ready
           await sdk.actions.ready();
+          await sdk.actions.addMiniApp()
 
           // Try to get existing token if available
           const existingToken = sdk.quickAuth.token;
