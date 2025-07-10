@@ -1,13 +1,5 @@
 "use client";
-import React, { FC, ReactNode, useMemo } from "react";
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-  TrustWalletAdapter,
-  CoinbaseWalletAdapter,
-} from "@solana/wallet-adapter-wallets";
-import { WalletConnectWalletAdapter } from "@solana/wallet-adapter-walletconnect";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import React, { FC, ReactNode } from "react";
 import { FarcasterSolanaProvider } from '@farcaster/mini-app-solana';
 
 interface SolanaProviderProps {

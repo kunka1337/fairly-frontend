@@ -1,0 +1,20 @@
+{
+  "frame": {
+    "name": "Fairly",
+    "version": "1",
+    "iconUrl": "https://fairly.best/icon.png",
+    "homeUrl": "https://fairly.best",
+    "imageUrl": "https://fairly.best/image.png",
+    "buttonTitle": "Launch",
+    "splashImageUrl": "https://fairly.best/splash.png",
+    "splashBackgroundColor": "#070B08",
+    "primaryCategory": "finance",
+    "subtitle": "Launch memes on SOL",
+    "heroImageUrl": "https://fairly.best/hero.png",
+    "description": "Description: Fairly is a dev-first memecoin launchpad on Solana. We return 95% of all platform fees directly to the teams behind the launches — no bullshit.",
+    "tags": [
+      "memecoin",
+      "launchpad"
+    ]
+  }
+}
