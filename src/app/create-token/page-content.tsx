@@ -16,7 +16,7 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { toast } from "sonner";
-import { Keypair, Connection, PublicKey } from "@solana/web3.js";
+import { Keypair, Connection, PublicKey, Transaction } from "@solana/web3.js";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { InputWithAdornment } from "@/components/ui/InputWithAdornment";
 import { DynamicBondingCurveClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
+import { BN } from "bn.js";
 
 const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/i;
 const telegramRegex = /^https?:\/\/(t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,}$/;
@@ -206,21 +207,35 @@ const CreateTokenPageContent = () => {
       );
 
       const client = new DynamicBondingCurveClient(connection, 'confirmed');
-      const poolTx = await client.pool.createPool({
-        config: new PublicKey(process.env.NEXT_PUBLIC_POOL_CONFIG_KEY as string),
-        baseMint: keyPair.publicKey,
-        name: data.name || "",
-        symbol: data.ticker || "",
-        uri: metadataUrl,
-        payer: publicKey,
-        poolCreator: publicKey,
+      const { createPoolTx, swapBuyTx } = await client.pool.createPoolWithFirstBuy({
+        createPoolParam: {
+          config: new PublicKey(process.env.NEXT_PUBLIC_POOL_CONFIG_KEY as string),
+          baseMint: keyPair.publicKey,
+          name: data.name || "",
+          symbol: data.ticker || "",
+          uri: metadataUrl,
+          payer: publicKey,
+          poolCreator: publicKey,
+        },
+        firstBuyParam: {
+          buyer: publicKey,
+          buyAmount: new BN(parseFloat(preBuyAmount) * 1e9),
+          minimumAmountOut: new BN(0),
+          referralTokenAccount: null,
+        }
       });
+
+      const combinedTx = new Transaction();
+      createPoolTx.instructions.forEach(ix => combinedTx.add(ix));
+      if (swapBuyTx) {
+        swapBuyTx.instructions.forEach(ix => combinedTx.add(ix));
+      }
 
       const {
         value: { blockhash, lastValidBlockHeight }
       } = await connection.getLatestBlockhashAndContext();
 
-      const signature = await sendTransaction(poolTx, connection);
+      const signature = await sendTransaction(combinedTx, connection, { signers: [keyPair] });
       await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
       toast.success('Token created successfully');
