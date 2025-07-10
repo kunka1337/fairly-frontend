@@ -69,7 +69,6 @@ interface CreatedTokenInfo {
 
 const CreateTokenPageContent = () => {
   const { publicKey, connected, sendTransaction } = useWallet();
-  const { isInFarcaster, user } = useFarcaster();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPreBuyCard, setShowPreBuyCard] = useState(false);
@@ -278,21 +277,24 @@ const CreateTokenPageContent = () => {
   };
 
   const handleFarcasterCast = async () => {
-    if (!createdTokenInfo || !isInFarcaster || !user) {
-      toast.error('Farcaster casting is only available within the Farcaster app');
-      return;
-    }
+    if (createdTokenInfo === null) return;
 
-    try {
-      const text = `I launched $${createdTokenInfo.ticker} on Fairly.\n\nCA: ${createdTokenInfo.mint}`;
-      await sdk.actions.composeCast({
-        text: text,
-        embeds: [`https://fairly.best/?token=${createdTokenInfo.mint}`]
-      });
-      toast.success('Cast composer opened!');
-    } catch (error) {
-      console.error('Failed to open cast composer:', error);
-      toast.error('Failed to open cast composer');
+    if (await sdk.isInMiniApp()) {
+      try {
+        await sdk.actions.composeCast({
+          text: `I launched $${createdTokenInfo.ticker} on Fairly.\n\nCA: ${createdTokenInfo.mint}`,
+          embeds: [`https://fairly.best/?token=${createdTokenInfo.mint}`]
+        });
+        toast.success('Cast done!');
+      } catch (error) {
+        console.error('Failed to open cast composer:', error);
+        toast.error('Failed to open cast composer');
+      }
+    } else {
+      const url = `https://fairly.best/?token=${createdTokenInfo.mint}`;
+      const text = `I launched $${createdTokenInfo.ticker} on Fairly\n\nCA: ${createdTokenInfo.mint}`;
+
+      window.open(`https://warpcast.com/~/compose?text=${encodeURIComponent(text)}&embeds[]=${encodeURIComponent(url)}`, "_blank")
     }
   };
 
