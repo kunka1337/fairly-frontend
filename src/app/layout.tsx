@@ -21,32 +21,26 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Fairly",
-  description: "Fairly: The Fair Token Launch Platform",
+  description: "Fairly is a dev-first memecoin launchpad on Solana",
   other: {
     "fc:miniapp": JSON.stringify({
-      version: "next",
-      imageUrl: "/logo_dark.png", // You may want to create a specific 3:2 ratio image
+      version: "1",
+      imageUrl: "/preview.png",
       button: {
-        title: "Fairly",
+        title: "Launch",
         action: {
-          type: "launch_frame",
-          name: "Fairly",
-          url: process.env.NEXT_PUBLIC_APP_URL || "https://yourdomain.com",
-          splashImageUrl: "/logo_dark.png"
+          type: "launch_miniapp",
         }
       }
     }),
     // Backward compatibility
     "fc:frame": JSON.stringify({
-      version: "next",
-      imageUrl: "/logo_dark.png",
+      version: "1",
+      imageUrl: "/preview.png",
       button: {
-        title: "Fairly",
+        title: "Launch",
         action: {
-          type: "launch_frame",
-          name: "Fairly",
-          url: process.env.NEXT_PUBLIC_APP_URL || "https://yourdomain.com",
-          splashImageUrl: "/logo_dark.png"
+          type: "launch_miniapp",
         }
       }
     })
