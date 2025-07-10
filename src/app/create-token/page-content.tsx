@@ -267,12 +267,17 @@ const CreateTokenPageContent = () => {
     }
   };
 
-  const handleTwitterShare = () => {
+  const handleTwitterShare = async () => {
     if (createdTokenInfo?.mint === undefined) return;
 
     const url = `https://fairly.best/?token=${createdTokenInfo.mint}`;
     const text = `I launched $${createdTokenInfo.ticker} on Fairly\n\nCA: ${createdTokenInfo.mint}\n\n${url}`;
-    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+    const link = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`
+    if (await sdk.isInMiniApp()) {
+      await sdk.actions.openUrl(link)
+    } else {
+      window.open(link, '_blank');
+    }
   };
 
   const handleFarcasterCast = async () => {
