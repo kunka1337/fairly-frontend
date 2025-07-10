@@ -35,26 +35,18 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
       const isMobile = window.innerWidth < 768; // md breakpoint instead of sm
       const userAgent = navigator.userAgent.toLowerCase();
       const isMobileUserAgent = /mobile|android|iphone|ipad|phone/i.test(userAgent);
-      
+
       const shouldUseMobile = isMobile || isMobileUserAgent;
-      
-      console.log('Mobile check:', { 
-        width: window.innerWidth, 
-        isMobile, 
-        isMobileUserAgent,
-        shouldUseMobile 
-      });
-      
       setIsMobileNavigation(shouldUseMobile);
     };
 
     // Check on mount
     checkMobile();
     setMounted(true);
-    
+
     // Add resize listener
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 

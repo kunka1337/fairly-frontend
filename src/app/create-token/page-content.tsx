@@ -27,7 +27,6 @@ import {
 import { InputWithAdornment } from "@/components/ui/InputWithAdornment";
 import { DynamicBondingCurveClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
 import { BN } from "bn.js";
-import { useFarcaster } from "@/contexts/FarcasterContext";
 import { FarcasterLogo, XLogo } from "@/components/logos";
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useRouter } from "next/navigation";
@@ -277,7 +276,7 @@ const CreateTokenPageContent = () => {
   };
 
   const handleFarcasterCast = async () => {
-    if (createdTokenInfo === null) return;
+    if (!createdTokenInfo) return;
 
     if (await sdk.isInMiniApp()) {
       try {
@@ -310,22 +309,20 @@ const CreateTokenPageContent = () => {
         <div className="w-full max-w-lg bg-card rounded-xl shadow-lg p-8 border border-border text-center">
           <h2 className="text-2xl font-bold mb-4">Token Created Successfully!</h2>
 
-          {/* Big button upfront */}
-          <Button
-            onClick={handleShowTokenInfo}
-            className="w-full bg-muted text-foreground hover:bg-muted/80 text-xs sm:text-sm font-medium py-4 mb-2 rounded-lg"
-          >
-            Show Info
-          </Button>
-
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 w-full">
+            <Button
+              onClick={handleShowTokenInfo}
+              className="w-full flex items-center justify-center gap-2 bg-muted text-foreground hover:bg-muted/90 text-sm font-medium py-3"
+            >
+              <span>Token info</span>
+            </Button>
             <div className="flex gap-2 sm:gap-3">
               <Button
                 onClick={handleFarcasterCast}
                 className="flex-1 flex items-center gap-1 sm:gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-xs sm:text-sm"
               >
                 <FarcasterLogo className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>Share on Farcaster</span>
+                <span>Share Farcaster</span>
               </Button>
 
               <Button
@@ -333,7 +330,7 @@ const CreateTokenPageContent = () => {
                 className="flex-1 flex items-center gap-1 sm:gap-2 bg-muted text-foreground hover:bg-muted/80 text-xs sm:text-sm"
               >
                 <XLogo className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>Share on Twitter</span>
+                <span>Share Twitter</span>
               </Button>
             </div>
           </div>
