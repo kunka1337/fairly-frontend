@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   other: {
     "fc:miniapp": JSON.stringify({
       version: "1",
-      imageUrl: "/preview.png",
+      imageUrl: "https://fairly.best/preview.png",
       button: {
         title: "Launch",
         action: {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     // Backward compatibility
     "fc:frame": JSON.stringify({
       version: "1",
-      imageUrl: "/preview.png",
+      imageUrl: "https://fairly.best/preview.png",
       button: {
         title: "Launch",
         action: {
