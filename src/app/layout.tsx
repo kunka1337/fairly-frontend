@@ -23,24 +23,21 @@ export const metadata: Metadata = {
   title: "Fairly",
   description: "Fairly is a dev-first memecoin launchpad on Solana",
   other: {
-    "fc:miniapp": JSON.stringify({
-      version: "1",
-      imageUrl: "https://fairly.best/preview.png",
-      button: {
-        title: "Launch",
-        action: {
-          type: "launch_miniapp",
-        }
-      }
-    }),
     // Backward compatibility
     "fc:frame": JSON.stringify({
-      version: "1",
+      version: "next",
       imageUrl: "https://fairly.best/preview.png",
       button: {
         title: "Launch",
         action: {
-          type: "launch_miniapp",
+          type: "launch_frame",
+          name: "Fairly",
+          url: "https://fairly.best",
+          splashImageUrl: "https://fairly.best/splash.png",
+          iconUrl: "https://fairly.best/icon.png",
+          splashBackgroundColor: "#070B08",
+          description: "Fairly is a dev-first memecoin launchpad on Solana",
+          primaryCategory: "finance",
         }
       }
     })
