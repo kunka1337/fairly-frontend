@@ -5,16 +5,21 @@
     "iconUrl": "https://fairly.best/icon.png",
     "homeUrl": "https://fairly.best",
     "imageUrl": "https://fairly.best/image.png",
-    "buttonTitle": "Launch",
     "splashImageUrl": "https://fairly.best/splash.png",
     "splashBackgroundColor": "#070B08",
-    "primaryCategory": "finance",
     "subtitle": "Launch memes on SOL",
-    "heroImageUrl": "https://fairly.best/hero.png",
-    "description": "Fairly is a dev-first memecoin launchpad on Solana. We return 95% of all platform fees directly to the teams behind the launches — no bullshit.",
+    "description": "Fairly is a dev-first memecoin launchpad on Solana",
+    "primaryCategory": "finance",
     "tags": [
       "memecoin",
       "launchpad"
-    ]
+    ],
+    "heroImageUrl": "https://fairly.best/hero.png",
+    "buttonTitle": "Launch"
+  },
+  "accountAssociation": {
+    "header": "eyJmaWQiOjExMTM2MTEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhjN0MwQzU2MTkwMDkzRmY5MTM2YzRjRDg2MTM3QUNFNWI0OTJDMWY4In0",
+    "payload": "eyJkb21haW4iOiJmYWlybHkuYmVzdCJ9",
+    "signature": "MHg5ODNhNzgzZTgxZWM3YTRjNTVkZThmNTZjZjNhMWJlYmJjYzFjNjYwZDFiMWRmMjhhNzIyMzA3N2RhNzY4MTQ1NWQ1MDEyODViOTllNTdlNDlkNjA0MTJiNmE2NmQ2NjVkODQ2MTI4ZmJmOTJlNjk0ZGFmMGYxMWQ0OTFiNDZhMDFj"
   }
 }
