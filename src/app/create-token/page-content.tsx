@@ -27,6 +27,10 @@ import {
 import { InputWithAdornment } from "@/components/ui/InputWithAdornment";
 import { DynamicBondingCurveClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
 import { BN } from "bn.js";
+import { useFarcaster } from "@/contexts/FarcasterContext";
+import { FarcasterLogo, XLogo } from "@/components/logos";
+import { sdk } from "@farcaster/miniapp-sdk";
+import { useRouter } from "next/navigation";
 
 const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/i;
 const telegramRegex = /^https?:\/\/(t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,}$/;
@@ -58,14 +62,20 @@ type BaseFormData = z.infer<typeof baseSchema>;
 type RequiredFormData = z.infer<typeof requiredSchema>;
 type FormData = BaseFormData | RequiredFormData;
 
+interface CreatedTokenInfo {
+  ticker: string;
+  mint: string;
+}
 
 const CreateTokenPageContent = () => {
   const { publicKey, connected, sendTransaction } = useWallet();
+  const { isInFarcaster, user } = useFarcaster();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [poolCreated, setPoolCreated] = useState(false);
   const [showPreBuyCard, setShowPreBuyCard] = useState(false);
   const [preBuyAmount, setPreBuyAmount] = useState<string>("");
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(null);
+  const [createdTokenInfo, setCreatedTokenInfo] = useState<CreatedTokenInfo | null>();
 
   const {
     previewUrl,
@@ -239,7 +249,10 @@ const CreateTokenPageContent = () => {
       await connection.confirmTransaction({ blockhash, lastValidBlockHeight, signature });
 
       toast.success('Token created successfully');
-      setPoolCreated(true);
+      setCreatedTokenInfo({
+        ticker: data.ticker || "",
+        mint: keyPair.publicKey.toBase58(),
+      });
     } catch (error) {
       if (
         error instanceof Error &&
@@ -256,15 +269,72 @@ const CreateTokenPageContent = () => {
     }
   };
 
-  if (poolCreated) {
+  const handleTwitterShare = () => {
+    if (createdTokenInfo?.mint === undefined) return;
+
+    const url = `https://fairly.best/?token=${createdTokenInfo.mint}`;
+    const text = `I launched $${createdTokenInfo.ticker} on Fairly\n\nCA: ${createdTokenInfo.mint}\n\n${url}`;
+    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const handleFarcasterCast = async () => {
+    if (!createdTokenInfo || !isInFarcaster || !user) {
+      toast.error('Farcaster casting is only available within the Farcaster app');
+      return;
+    }
+
+    try {
+      const text = `I launched $${createdTokenInfo.ticker} on Fairly.\n\nCA: ${createdTokenInfo.mint}`;
+      await sdk.actions.composeCast({
+        text: text,
+        embeds: [`https://fairly.best/?token=${createdTokenInfo.mint}`]
+      });
+      toast.success('Cast composer opened!');
+    } catch (error) {
+      console.error('Failed to open cast composer:', error);
+      toast.error('Failed to open cast composer');
+    }
+  };
+
+  const handleShowTokenInfo = () => {
+    if (createdTokenInfo) {
+      router.push(`/?token=${createdTokenInfo.mint}`);
+    }
+  };
+
+  if (createdTokenInfo?.mint !== undefined) {
     return (
       <div className="flex-grow flex justify-center items-center px-4 py-8">
         <div className="w-full max-w-lg bg-card rounded-xl shadow-lg p-8 border border-border text-center">
-          <h2 className="text-2xl font-bold text-green-600 mb-4">Token Created Successfully!</h2>
-          <p className="mb-4">Your token has been created and is now ready to use.</p>
-          <Button onClick={() => setPoolCreated(false)} className="bg-blue-500 text-white hover:bg-blue-600">
-            Create Another Token
+          <h2 className="text-2xl font-bold mb-4">Token Created Successfully!</h2>
+
+          {/* Big button upfront */}
+          <Button
+            onClick={handleShowTokenInfo}
+            className="w-full bg-muted text-foreground hover:bg-muted/80 text-xs sm:text-sm font-medium py-4 mb-2 rounded-lg"
+          >
+            Show Info
           </Button>
+
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2 sm:gap-3">
+              <Button
+                onClick={handleFarcasterCast}
+                className="flex-1 flex items-center gap-1 sm:gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-xs sm:text-sm"
+              >
+                <FarcasterLogo className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Share on Farcaster</span>
+              </Button>
+
+              <Button
+                onClick={handleTwitterShare}
+                className="flex-1 flex items-center gap-1 sm:gap-2 bg-muted text-foreground hover:bg-muted/80 text-xs sm:text-sm"
+              >
+                <XLogo className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Share on Twitter</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
