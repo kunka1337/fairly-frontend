@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Fairly",
-  description: "Fairly is a dev-first memecoin launchpad on Solana",
+  description: "Fairly is a dev-first Solana memecoin launchpad returning 95 percents of all fees to creators.",
   other: {
     // Backward compatibility
     "fc:frame": JSON.stringify({
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
           splashImageUrl: "https://fairly.best/splash.png",
           iconUrl: "https://fairly.best/icon.png",
           splashBackgroundColor: "#070B08",
-          description: "Fairly is a dev-first memecoin launchpad on Solana",
+          description: "Fairly is a dev-first Solana memecoin launchpad returning 95 percents of all fees to creators.",
           primaryCategory: "finance",
         }
       }
