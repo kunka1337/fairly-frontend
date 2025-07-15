@@ -1,4 +1,4 @@
-This is Next.js MeteoraThis is the frontend for a Solana memecoin launchpad, built with Next.js and Meteora DBC. The app is fully stateless, using a combination of direct Solana RPC calls and the Jupiter public API to power all functionality without a backend.
+This is the frontend for a Solana Memecoin Launchpad, built with Next.js and Meteora DBC. The app is fully stateless, using a combination of direct Solana RPC calls and the Jupiter public API to power all functionality without a backend.
 
 ## Getting Started
 
