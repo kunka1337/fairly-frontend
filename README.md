@@ -1,6 +1,6 @@
 # Solana Memecoin Launchpad
 
-This is the frontend for a Solana Memecoin Launchpad built with **Next.js** and **Meteora DBC**. The app is **fully stateless**, relying entirely on direct Solana RPC calls and the **Jupiter public API**—no backend required. All UI elements are built using shadcn/ui so it will be much easier for developers to adapt it to your own needs. 
+This is the web app hosting Solana Memecoin Launchpad built on top of [**Meteora DBC**](https://docs.meteora.ag/overview/products/dbc/1-what-is-dbc) with **Next.js**. The app is **fully stateless**, relying entirely on direct Solana RPC calls and the **Jupiter public API**—no backend required. All UI elements are built using shadcn/ui so it will be much easier for developers to adapt it to your own needs. 
 
 ---
 
