@@ -49,12 +49,3 @@ bun dev
 ```
 
 Open your browser at [http://localhost:3000](http://localhost:3000) to view the app.
-
----
-
-## 🧱 Tech Stack
-
-- **Next.js** – React framework  
-- **Solana RPC** – direct chain interaction  
-- **Jupiter API** – token pricing & swaps  
-- **Meteora DBC** – decentralized bonding curves
