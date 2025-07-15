@@ -1,10 +1,45 @@
-This is the frontend for a Solana Memecoin Launchpad, built with Next.js and Meteora DBC. The app is fully stateless, using a combination of direct Solana RPC calls and the Jupiter public API to power all functionality without a backend.
+# Solana Memecoin Launchpad
+
+This is the frontend for a Solana Memecoin Launchpad built with **Next.js** and **Meteora DBC**. The app is **fully stateless**, relying entirely on direct Solana RPC calls and the **Jupiter public API**—no backend required.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Configure Your Launchpad
 
-```bash
+Set up your token launch configuration at:  
+👉 [https://launch.meteora.ag/](https://launch.meteora.ag/)
+
+### 2. Environment Variables
+
+Create a `.env` file in the root of the project with the following structure:
+
+```
+DATABASE_URL=postgresql://<your-db-url> # Use only if you want to save any state later.
+PINATA_API_KEY=<your-pinata-api-key>
+PINATA_API_SECRET=<your-pinata-api-secret>
+NEXT_PUBLIC_POOL_CONFIG_KEY=<your-config-key>
+NEXT_PUBLIC_RPC_URL=https://mainnet.helius-rpc.com/?api-key=<your-helius-api-key>
+```
+
+> ⚠️ **Never commit your `.env` file**—keep it private.
+
+---
+
+### 3. Start the Dev Server
+
+Install dependencies if you haven't:
+
+```
+npm install
+# or
+yarn
+```
+
+Then run the app locally:
+
+```
 npm run dev
 # or
 yarn dev
@@ -14,4 +49,13 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser at [http://localhost:3000](http://localhost:3000) to view the app.
+
+---
+
+## 🧱 Tech Stack
+
+- **Next.js** – React framework  
+- **Solana RPC** – direct chain interaction  
+- **Jupiter API** – token pricing & swaps  
+- **Meteora DBC** – decentralized bonding curves
