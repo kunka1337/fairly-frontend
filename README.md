@@ -1,6 +1,6 @@
 # Solana Memecoin Launchpad
 
-This is the frontend for a Solana Memecoin Launchpad built with **Next.js** and **Meteora DBC**. The app is **fully stateless**, relying entirely on direct Solana RPC calls and the **Jupiter public API**—no backend required.
+This is the frontend for a Solana Memecoin Launchpad built with **Next.js** and **Meteora DBC**. The app is **fully stateless**, relying entirely on direct Solana RPC calls and the **Jupiter public API**—no backend required. All UI elements are built using shadcn/ui so it will be much easier for developers to adapt it to your own needs. 
 
 ---
 
@@ -8,8 +8,7 @@ This is the frontend for a Solana Memecoin Launchpad built with **Next.js** and 
 
 ### 1. Configure Your Launchpad
 
-Set up your token launch configuration at:  
-👉 [https://launch.meteora.ag/](https://launch.meteora.ag/)
+Set up your token launch configuration at [Meteora](https://launch.meteora.ag/). The resulting config address will be used in the next step.
 
 ### 2. Environment Variables
 
