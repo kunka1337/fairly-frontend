@@ -354,6 +354,21 @@ const CreateTokenPageContent = () => {
               <div className="mb-3 text-sm text-muted-foreground font-medium text-left">
                 Choose wisely, you won't be able to change any data once the token is created.
               </div>
+              <div className="mb-4 p-4 bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-sm text-teal-700 dark:text-teal-300 font-medium">
+                    Don't forget to claim trading fees after launching your tokens on{" "}
+                    <a 
+                      href="/my-tokens" 
+                      className="underline hover:text-teal-800 dark:hover:text-teal-200 transition-colors"
+                    >
+                      My Tokens
+                    </a>{" "}
+                    page.
+                  </p>
+                </div>
+              </div>
               <FormField name="name" control={form.control} render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
