@@ -11,6 +11,7 @@ import {
   Pause,
   Search,
   Copy,
+  Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import { TokenCardSkeleton } from "@/components/skeletons";
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useWebSocketData, TokenWithPool } from "@/lib/websocket-context";
 import { useSearchParams, useRouter } from "next/navigation";
 import { prettifyNumber, getTotalTransactions } from "@/lib/token-utils";
+import { XLogo, TelegramLogo } from "@/components/logos";
 
 // prettifyNumber is now imported from token-utils
 
@@ -155,6 +157,45 @@ const TokenCard = ({
                 <a href={`https://x.com/search?q=${token.id}`} target="_blank" rel="noopener noreferrer" aria-label="Search on X">
                   <Search className="w-3 h-3 text-muted-foreground hover:text-foreground transition-colors" />
                 </a>
+                {/* Social Links */}
+                <div className="flex items-center gap-1 ml-1">
+                  {token.pool.baseAsset.website && (
+                    <a
+                      href={token.pool.baseAsset.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label="Visit website"
+                    >
+                      <Globe className="w-3 h-3" />
+                    </a>
+                  )}
+                  {token.pool.baseAsset.twitter && (
+                    <a
+                      href={token.pool.baseAsset.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label="View on X"
+                    >
+                      <XLogo className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                  {token.pool.baseAsset.telegram && (
+                    <a
+                      href={token.pool.baseAsset.telegram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label="Join Telegram"
+                    >
+                      <TelegramLogo className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
               </div>
               <div className="flex items-baseline gap-2">
                 <div className="text-xs text-muted-foreground flex items-center gap-2">
