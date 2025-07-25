@@ -75,6 +75,13 @@ const TokenCard = ({
   const strokeDasharray = circumference;
   const strokeDashoffset = circumference - (token.progress / 100) * circumference;
 
+  // Check if this is the priority token
+  const priorityTokenId = process.env.NEXT_PUBLIC_CA;
+  const isPriorityToken = priorityTokenId && (
+    token.pool.baseAsset.id === priorityTokenId || 
+    token.id === priorityTokenId
+  );
+
   const handleCopy = () => {
     navigator.clipboard.writeText(token.pool.baseAsset.id);
     toast("Copied!");
@@ -106,6 +113,14 @@ const TokenCard = ({
         onMouseLeave={() => setHoveredSection(null)}
         onClick={handleCardClick}
       >
+        {/* OG Indicator */}
+        {isPriorityToken && (
+          <div className="absolute top-1 right-1 z-10">
+            <div className="bg-teal-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm border border-teal-400/20">
+              OG
+            </div>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <div className="relative flex-shrink-0 w-14 h-14 flex items-center justify-center">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-muted">

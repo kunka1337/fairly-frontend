@@ -20,6 +20,9 @@ interface WebSocketContextType {
 }
 
 const sortAndTruncateLists = (lists: WebSocketData): WebSocketData => {
+  // Get the priority token ID from environment
+  const priorityTokenId = process.env.NEXT_PUBLIC_CA;
+
   // New: listedTime (createdAt) desc
   const recent = [...lists.recent]
     .map((item, idx) => ({ item, idx }))
@@ -42,10 +45,25 @@ const sortAndTruncateLists = (lists: WebSocketData): WebSocketData => {
     .map(({ item }) => item)
     .slice(0, CONSTANTS.MAX_LIST_SIZE);
 
-  // Bonded: graduatedAt desc
+  // Bonded: graduatedAt desc with priority token at top
   const graduated = [...lists.graduated]
     .map((item, idx) => ({ item, idx }))
     .sort((a, b) => {
+      // Check if either item is the priority token
+      const aIsPriority = priorityTokenId && (
+        a.item.pool.baseAsset?.id === priorityTokenId || 
+        a.item.id === priorityTokenId
+      );
+      const bIsPriority = priorityTokenId && (
+        b.item.pool.baseAsset?.id === priorityTokenId || 
+        b.item.id === priorityTokenId
+      );
+
+      // Priority token should always come first
+      if (aIsPriority && !bIsPriority) return -1;
+      if (!aIsPriority && bIsPriority) return 1;
+      
+      // If both are priority or both are not priority, sort by graduatedAt desc
       const aTime = new Date(a.item.pool.baseAsset?.graduatedAt || a.item.pool.graduatedAt || 0).getTime();
       const bTime = new Date(b.item.pool.baseAsset?.graduatedAt || b.item.pool.graduatedAt || 0).getTime();
       return bTime - aTime || a.idx - b.idx;
