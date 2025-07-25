@@ -20,6 +20,7 @@ PINATA_API_KEY=<your-pinata-api-key>
 PINATA_API_SECRET=<your-pinata-api-secret>
 NEXT_PUBLIC_POOL_CONFIG_KEY=<your-config-key>
 NEXT_PUBLIC_RPC_URL=https://mainnet.helius-rpc.com/?api-key=<your-helius-api-key>
+NEXT_PUBLIC_CA=<your-higlighted-token-ca>
 ```
 
 > ⚠️ **Never commit your `.env` file**—keep it private.
